@@ -5,6 +5,7 @@ from flask_jwt_extended import (
     JWTManager, jwt_required, create_access_token,
     get_jwt_identity
 )
+import sqlite3
 import instance.config as appendConfig
 import routes as EndPoints
 
@@ -15,37 +16,25 @@ api = Api(app)
 app.config['SECRET_KEY'] = 'super-secret'
 print(appendConfig.conf['SECRET_KEY'])
 
-# USING JWT_EXTENDED MODULE
-
+# jwt Object
 jwt = JWTManager(app)
 
-# Provide a method to create access tokens. The create_access_token()
-# function is used to actually generate the token, and you can return
-# it to the caller however you choose.
-'''@app.route('/login', methods=['POST'])
-def login():
-    if not request.is_json:
-        return jsonify({"msg": "Missing JSON in request"}), 400
+#SQLite Setup
 
-    username = request.json.get('username', None)
-    password = request.json.get('password', None)
-    if not username:
-        return jsonify({"msg": "Missing username parameter"}), 400
-    if not password:
-        return jsonify({"msg": "Missing password parameter"}), 400
+conn=sqlite3.connect("user.db")
+cur=conn.cursor()
+cur.execute('CREATE TABLE IF NOT EXISTS store(id TEXT, password TEXT)')
+conn.commit()
+conn.close()
 
-    if username != 'test' or password != 'test':
-        return jsonify({"msg": "Bad username or password"}), 401
-
-    # Identity can be any data that is json serializable
-    access_token = create_access_token(identity=username)
-    return jsonify(access_token=access_token), 200'''
-
+# ENDPOINTS:
 api.add_resource(EndPoints.HelloWorld, '/', endpoint = 'Hello')
 api.add_resource(EndPoints.Dashboard, '/dashboard', endpoint = 'Dashboard')
 api.add_resource(EndPoints.Fileupload, '/fileUpload', endpoint = 'File')
 api.add_resource(EndPoints.Protected, '/protected',  endpoint = 'Protected')
 api.add_resource(EndPoints.Signup, '/protected',  endpoint = 'Signup')
 
+
 if __name__ == '__main__':
     app.run(debug=True)
+    
