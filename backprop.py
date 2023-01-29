@@ -1,4 +1,4 @@
-# from Adrew Karpathy Tutorial
+# from Adrew Karpathy Tutorial on neural networks
 class Value:
   
   def __init__(self, data, _children=(), _op='', label=''):
